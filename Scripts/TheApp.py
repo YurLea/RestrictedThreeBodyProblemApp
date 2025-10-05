@@ -1,0 +1,42 @@
+import numpy as np
+from scipy.integrate import solve_ivp
+import matplotlib.pyplot as plt
+
+
+def nonlinear_system(t, states):
+    """
+    Нелинейная система Лоренца с 4 переменными
+    """
+    x, y, u, v = states
+
+    mu = 0.02
+
+    r1 = np.sqrt((x - mu)**2 + y**2)
+    r2 = np.sqrt((x - mu + 1)**2 + y**2)
+
+    dxdt = u
+    dydt = v
+    dudt = (2*v + (1 - mu) * (x - mu) + mu * (x + 1 - mu) -
+            (1-mu) * (x - mu) / r1**3 - mu * (x - mu + 1) / r2**3)
+    dvdt = (-2*u + (1 - mu) * y + mu * y -
+            (1-mu) * y / r1**3 - mu * y / r2**3)
+
+    return [dxdt, dydt, dudt, dvdt]
+
+# Решение
+init_states = [-0.0, 0.15, 2.0, 0]
+t_span = (0, 10)
+t_eval = np.linspace(0, 10, 100000)
+
+sol = solve_ivp(nonlinear_system, t_span, init_states, t_eval=t_eval,
+                method='RK45', rtol=1e-12, atol=1e-12)
+
+# Визуализация
+
+plt.plot(sol.y[0], sol.y[1])
+plt.title('y1(t)')
+plt.xlabel('Время')
+plt.ylabel('y1')
+
+plt.tight_layout()
+plt.show()
