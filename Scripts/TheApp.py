@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def nonlinear_system(t, states):
     """
-    Нелинейная система Лоренца с 4 переменными
+    Restricted 3 body problem
     """
     x, y, u, v = states
 
@@ -23,7 +23,7 @@ def nonlinear_system(t, states):
 
     return [dxdt, dydt, dudt, dvdt]
 
-# Решение
+# Solultion
 init_states = [-0.0, 0.15, 2.0, 0]
 t_span = (0, 10)
 t_eval = np.linspace(0, 10, 100000)
@@ -31,8 +31,7 @@ t_eval = np.linspace(0, 10, 100000)
 sol = solve_ivp(nonlinear_system, t_span, init_states, t_eval=t_eval,
                 method='RK45', rtol=1e-12, atol=1e-12)
 
-# Визуализация
-
+# Visualization
 plt.plot(sol.y[0], sol.y[1])
 plt.title('y1(t)')
 plt.xlabel('Время')
