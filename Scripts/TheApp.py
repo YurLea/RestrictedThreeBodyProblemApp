@@ -9,7 +9,7 @@ def nonlinear_system(t, states):
     """
     x, y, u, v = states
 
-    mu = 0.02
+    mu = 0.5
 
     r1 = np.sqrt((x - mu)**2 + y**2)
     r2 = np.sqrt((x - mu + 1)**2 + y**2)
@@ -24,18 +24,18 @@ def nonlinear_system(t, states):
     return [dxdt, dydt, dudt, dvdt]
 
 # Solultion
-init_states = [-0.0, 0.15, 2.0, 0]
-t_span = (0, 10)
-t_eval = np.linspace(0, 10, 100000)
+init_states = [0.6, 0.0, 0, 1.0]
+t_span = (0, 5)
+t_eval = np.linspace(0, 5, 100000)
 
 sol = solve_ivp(nonlinear_system, t_span, init_states, t_eval=t_eval,
                 method='RK45', rtol=1e-12, atol=1e-12)
 
 # Visualization
 plt.plot(sol.y[0], sol.y[1])
-plt.title('y1(t)')
-plt.xlabel('Время')
-plt.ylabel('y1')
+plt.title('Orbit')
+plt.xlabel('x')
+plt.ylabel('y')
 
 plt.tight_layout()
 plt.show()
