@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33900c89-b6d4-40bc-bd0b-2ebaeb3a91bf" name="Changes" comment="general preparing before app 1">
+    <list default="true" id="33900c89-b6d4-40bc-bd0b-2ebaeb3a91bf" name="Changes" comment="general preparing before app 2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/MethodsForSolving.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/MethodsForSolving.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/TheApp.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/TheApp.py" afterDir="false" />
@@ -80,7 +80,7 @@
       <workItem from="1759680525690" duration="5039000" />
       <workItem from="1759843726464" duration="5318000" />
       <workItem from="1759924064378" duration="49000" />
-      <workItem from="1759936608367" duration="1862000" />
+      <workItem from="1759936608367" duration="3543000" />
     </task>
     <task id="LOCAL-00001" summary="The start">
       <option name="closed" value="true" />
@@ -130,7 +130,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759844585588</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="general preparing before app 2">
+      <option name="closed" value="true" />
+      <created>1759941424002</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1759941424002</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -154,9 +162,10 @@
     <MESSAGE value="equations fixes" />
     <MESSAGE value="critical fixes" />
     <MESSAGE value="general preparing before app 1" />
-    <option name="LAST_COMMIT_MESSAGE" value="general preparing before app 1" />
+    <MESSAGE value="general preparing before app 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="general preparing before app 2" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/RestrictedThreeBodyProblemApp$TheApp.coverage" NAME="TheApp Coverage Results" MODIFIED="1759844524945" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
+    <SUITE FILE_PATH="coverage/RestrictedThreeBodyProblemApp$TheApp.coverage" NAME="TheApp Coverage Results" MODIFIED="1759942858041" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
   </component>
 </project>
