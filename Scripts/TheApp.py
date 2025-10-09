@@ -57,10 +57,10 @@ class OrbitPlotWindow(QMainWindow):
     def plot_lagrange_points(self, ax, mu):
         """Отображение точек Лагранжа и массивных тел"""
         # Массивные тела (более крупные и заметные)
-        ax.plot(mu, 0, 'ko', markersize=12, label='M1')
-        ax.plot(mu - 1, 0, 'ko', markersize=12, label='M2')
-        ax.text(mu, 0.1, 'M1', ha='center', fontsize=12)
-        ax.text(mu - 1, 0.1, 'M2', ha='center', fontsize=12)
+        ax.plot(-mu, 0, 'ko', markersize=10, label='M1')
+        ax.plot(-mu + 1, 0, 'ko', markersize=10, label='M2')
+        ax.text(-mu, 0.1, 'M1', ha='center', fontsize=10)
+        ax.text(-mu + 1, 0.1, 'M2', ha='center', fontsize=10)
 
         # Точки Лагранжа L1, L2, L3 (коллинеарные)
         # Приближенные вычисления для точек Лагранжа

@@ -47,7 +47,7 @@ class ThreeBodySolver:
             left, right = a, b
             f_left = equation(left)
 
-            for _ in range(50):  # Максимум 50 итераций
+            for _ in range(100):  # Максимум 100 итераций
                 mid = (left + right) / 2
                 f_mid = equation(mid)
 
