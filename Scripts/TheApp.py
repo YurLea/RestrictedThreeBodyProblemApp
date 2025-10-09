@@ -64,13 +64,9 @@ class OrbitPlotWindow(QMainWindow):
 
         # Точки Лагранжа L1, L2, L3 (коллинеарные)
         # Приближенные вычисления для точек Лагранжа
-        gamma1 = ((1 - mu) / 3) ** (1 / 3)
-        gamma2 = ((1 - mu) / 3) ** (1 / 3)
-        gamma3 = 1 - (7 * mu) / 12  # Приближение для L3
+        alpha = (mu / 3) ** (1/3)
 
-        L1_x = 1 - mu - gamma1
-        L2_x = 1 - mu + gamma2
-        L3_x = -1 + mu + gamma3
+        L1_x, L2_x, L3_x = ThreeBodySolver.get_lagrange_points_simple(mu)
 
         # L4 и L5 (треугольные)
         L4_x = 0.5 - mu
