@@ -1,93 +1,12 @@
 import sys
 import numpy as np
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
+import PyQt5 as Qt
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QHBoxLayout, QGroupBox, QLabel, QLineEdit,
                              QComboBox, QPushButton, QGridLayout, QDoubleSpinBox,
-                             QTextEdit)
+                             QTextEdit, QFormLayout, QMessageBox)
 from MethodsForSolving import ThreeBodySolver
-
-
-class OrbitPlotWindow(QMainWindow):
-    """Окно для визуализации орбиты"""
-
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Визуализация орбиты - Ограниченная задача трех тел")
-        self.setGeometry(100, 100, 800, 600)
-
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        layout = QVBoxLayout(central_widget)
-
-        # Создание matplotlib figure
-        self.figure = Figure(figsize=(8, 6), dpi=100)
-        self.canvas = FigureCanvas(self.figure)
-        layout.addWidget(self.canvas)
-
-    def plot_orbit(self, sol, mu, init_states, method):
-        """Построение графика орбиты"""
-        self.figure.clear()
-
-        # Создание основного графика
-        ax = self.figure.add_subplot(111)
-
-        x, y, u, v = sol.y
-        t = sol.t
-
-        # Основной график орбиты
-        ax.plot(x, y, 'b-', linewidth=1, label='Траектория')
-        ax.plot(x[0], y[0], 'go', markersize=8, label='Начало')
-        ax.plot(x[-1], y[-1], 'ro', markersize=8, label='Конец')
-
-        # Точки Лагранжа и массивные тела
-        self.plot_lagrange_points(ax, mu)
-
-        ax.set_xlabel('x')
-        ax.set_ylabel('y')
-        ax.set_title(f'Орбита в ограниченной задаче трех тел\nμ={mu}, метод: {method}')
-        ax.grid(True, alpha=0.3)
-        ax.legend()
-        ax.axis('equal')
-
-        self.figure.tight_layout()
-        self.canvas.draw()
-
-    def plot_lagrange_points(self, ax, mu):
-        """Отображение точек Лагранжа и массивных тел"""
-        # Массивные тела (более крупные и заметные)
-        ax.plot(-mu, 0, 'ko', markersize=10, label='M1')
-        ax.plot(-mu + 1, 0, 'ko', markersize=10, label='M2')
-        ax.text(-mu, 0.1, 'M1', ha='center', fontsize=10)
-        ax.text(-mu + 1, 0.1, 'M2', ha='center', fontsize=10)
-
-        # Точки Лагранжа L1, L2, L3 (коллинеарные)
-        # Приближенные вычисления для точек Лагранжа
-        alpha = (mu / 3) ** (1/3)
-
-        L1_x, L2_x, L3_x = ThreeBodySolver.get_lagrange_points_simple(mu)
-
-        # L4 и L5 (треугольные)
-        L4_x = 0.5 - mu
-        L4_y = np.sqrt(3) / 2
-        L5_x = 0.5 - mu
-        L5_y = -np.sqrt(3) / 2
-
-        # Отображение всех точек Лагранжа
-        lagrange_points = [
-            (L1_x, 0, 'L1'),
-            (L2_x, 0, 'L2'),
-            (L3_x, 0, 'L3'),
-            (L4_x, L4_y, 'L4'),
-            (L5_x, L5_y, 'L5')
-        ]
-
-        for i, (lx, ly, label) in enumerate(lagrange_points):
-            color = 'red' if i < 3 else 'green'  # Коллинеарные красные, треугольные зеленые
-            ax.plot(lx, ly, '^', color=color, markersize=8, markeredgecolor='black')
-            ax.text(lx, ly + 0.04, label, ha='center', fontsize=10,
-                    bbox=dict(boxstyle="round,pad=0.2", facecolor="white", alpha=0.7))
+from PlotWindow import OrbitPlotWindow
 
 
 class MainWindow(QMainWindow):
@@ -189,6 +108,37 @@ class MainWindow(QMainWindow):
         params_group.setLayout(params_layout)
         layout.addWidget(params_group)
 
+        # Настройки графика
+        self.settings_group = QGroupBox("Параметры области отображения графика")
+        group_layout = QFormLayout()
+
+        # Поля для ввода координат центра
+        self.center_x_input = QLineEdit()
+        self.center_x_input.setPlaceholderText("0.0")
+
+        self.center_y_input = QLineEdit()
+        self.center_y_input.setPlaceholderText("0.0")
+
+        # Поля для ввода размеров области
+        self.bounds_x_input = QLineEdit()
+        self.bounds_x_input.setPlaceholderText("5.0")
+        self.bounds_y_input = QLineEdit()
+        self.bounds_y_input.setPlaceholderText("5.0")
+
+        # Добавляем поля в форму
+        group_layout.addRow("Центр X:", self.center_x_input)
+        group_layout.addRow("Центр Y:", self.center_y_input)
+        group_layout.addRow("Размер по OX:", self.bounds_x_input)
+        group_layout.addRow("Размер по OY:", self.bounds_y_input)
+
+        self.settings_group.setLayout(group_layout)
+        layout.addWidget(self.settings_group)
+
+        # Кнопка применения настроек
+        self.apply_button = QPushButton("Применить настройки")
+        self.apply_button.clicked.connect(self.apply_settings)
+        layout.addWidget(self.apply_button)
+
         # Кнопки управления
         self.solve_button = QPushButton("Решить задачу и построить график")
         self.solve_button.clicked.connect(self.solve_problem)
@@ -277,6 +227,39 @@ class MainWindow(QMainWindow):
                        0] + f'<p id="current_conditions">{conditions_text}</p></body></html>'
         self.equations_text.setHtml(new_html)
 
+    def apply_settings(self):
+        """Обработчик нажатия кнопки применения настроек"""
+        try:
+            # Получаем значения из полей ввода
+            center_x = float(self.center_x_input.text() or 0.0)
+            center_y = float(self.center_y_input.text() or 0.0)
+            bounds_x = float(self.bounds_x_input.text() or 5.0)
+            bounds_y = float(self.bounds_y_input.text() or 5.0)
+
+            # Проверяем валидность размеров
+            if bounds_x <= 0 or bounds_y <= 0:
+                QMessageBox.warning(self, "Ошибка", "Размеры области должны быть положительными числами")
+                return
+
+            # Здесь передаем параметры в метод построения графика
+            self.update_plot_parameters(center_x, center_y, bounds_x, bounds_y)
+
+            QMessageBox.information(self, "Успех", "Параметры графика обновлены!")
+
+        except ValueError:
+            QMessageBox.warning(self, "Ошибка", "Пожалуйста, введите корректные числовые значения")
+
+    def update_plot_parameters(self, center_x, center_y, bounds_x, bounds_y):
+        """
+        Обновляет параметры графика
+        Эту функцию нужно интегрировать с вашим существующим кодом
+        """
+        print(f"Новые параметры графика: Центр({center_x}, {center_y}), Размер({bounds_x}, {bounds_y})")
+        # Здесь вызывайте ваш метод plot_orbit с новыми параметрами:
+        #self.plot_orbit(sol, mu, init_states, method,
+        #                center_point=(center_x, center_y),
+        #                bounds=(bounds_x, bounds_y))
+
     def solve_problem(self):
         """Решение задачи и построение графика"""
         try:
@@ -298,18 +281,53 @@ class MainWindow(QMainWindow):
             # Решение системы
             sol = self.solver.solve_system(init_states, method, t_span, t_eval, mu)
 
+            # Получение параметров графика с обработкой ошибок
+            try:
+                center_x = float(self.center_x_input.text())
+                center_y = float(self.center_y_input.text())
+                bounds_x = float(self.bounds_x_input.text())
+                bounds_y = float(self.bounds_y_input.text())
+            except ValueError:
+                QMessageBox.warning(
+                    self,
+                    "Ошибка ввода параметров графика",
+                    "Пожалуйста, введите корректные числовые значения для всех параметров графика:\n"
+                    "- Координата X центра\n"
+                    "- Координата Y центра\n"
+                    "- Размер области по OX\n"
+                    "- Размер области по OY\n\n"
+                    "Пример: 0.0, 1.5, 3.0, 2.5"
+                )
+                return
+
+            # Проверка на положительные размеры области
+            if bounds_x <= 0 or bounds_y <= 0:
+                QMessageBox.warning(
+                    self,
+                    "Некорректные размеры области",
+                    "Размеры области отображения должны быть положительными числами.\n"
+                    f"Получено: OX={bounds_x}, OY={bounds_y}"
+                )
+                return
+
             # Создание или обновление окна с графиком
             if self.plot_window is None:
                 self.plot_window = OrbitPlotWindow()
 
-            self.plot_window.plot_orbit(sol, mu, init_states, method)
+            self.plot_window.plot_orbit(
+                sol, mu, init_states, method,
+                (center_x, center_y),
+                (bounds_x, bounds_y)
+            )
             self.plot_window.show()
 
             # Обновление отображаемых условий
             self.update_equations_display()
 
         except Exception as e:
-            print(f"Ошибка при решении: {e}")
+            error_msg = f"Ошибка при решении системы: {str(e)}"
+            print(error_msg)
+            QMessageBox.critical(self, "Ошибка вычислений", error_msg)
 
 
 def main():
